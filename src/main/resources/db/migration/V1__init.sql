@@ -10,9 +10,7 @@ CREATE TABLE students (
 -- Create the exams table
 CREATE TABLE exams (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
-    exam_name VARCHAR(100) NOT NULL,
-    total_score INT NOT NULL, -- 100 points always
-    exam_time_zone VARCHAR(50) NOT NULL DEFAULT 'UTC-5'
+    exam_name VARCHAR(100) NOT NULL
 );
 
 -- Create the questions table
