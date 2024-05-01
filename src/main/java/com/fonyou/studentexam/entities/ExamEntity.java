@@ -15,6 +15,4 @@ public class ExamEntity {
     private Long id;
 
     private String examName;
-    private int totalScore;
-    private String examTimeZone;
 }
