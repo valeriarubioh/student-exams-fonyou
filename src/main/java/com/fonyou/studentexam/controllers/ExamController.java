@@ -1,0 +1,25 @@
+package com.fonyou.studentexam.controllers;
+
+import com.fonyou.studentexam.entities.ExamEntity;
+import com.fonyou.studentexam.payload.request.ExamQuestionsRequest;
+import com.fonyou.studentexam.services.ExamService;
+import jakarta.validation.Valid;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+@RestController
+@RequestMapping("/api/v1/exams")
+public class ExamController {
+
+    @Autowired
+    private ExamService examService;
+
+
+    @PostMapping
+    public ResponseEntity<ExamEntity> createExamQuestions(@RequestBody @Valid ExamQuestionsRequest examQuestionsRequestList) {
+        examService.createExamQuestions(examQuestionsRequestList);
+        return new ResponseEntity<>(HttpStatus.CREATED);
+    }
+}
