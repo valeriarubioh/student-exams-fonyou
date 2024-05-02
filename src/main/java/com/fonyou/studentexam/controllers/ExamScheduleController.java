@@ -6,6 +6,7 @@ import com.fonyou.studentexam.entities.ExamScheduleEntity;
 import com.fonyou.studentexam.entities.StudentResponseEntity;
 import com.fonyou.studentexam.payload.request.ExamResponsesRequest;
 import com.fonyou.studentexam.payload.request.ExamScheduleRequest;
+import com.fonyou.studentexam.payload.response.ExamGradeResponse;
 import com.fonyou.studentexam.services.ExamService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,9 +29,9 @@ public class ExamScheduleController {
     }
 
     @PostMapping("/{examScheduleId}/responses")
-    public ResponseEntity<ExamGradeEntity> submitExam(@PathVariable("examScheduleId") @Valid Long examScheduleId,
-                                                 @RequestBody @Valid List<ExamResponsesRequest> examResponsesRequestList) {
-        ExamGradeEntity responseObj = examService.submitExamResponses(examScheduleId, examResponsesRequestList);
+    public ResponseEntity<ExamGradeResponse> submitExam(@PathVariable("examScheduleId") @Valid Long examScheduleId,
+                                                        @RequestBody @Valid List<ExamResponsesRequest> examResponsesRequestList) {
+        ExamGradeResponse responseObj = examService.submitExamResponses(examScheduleId, examResponsesRequestList);
         return ResponseEntity.ok(responseObj);
 
     }

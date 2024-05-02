@@ -6,6 +6,10 @@ import com.fonyou.studentexam.payload.request.ExamQuestionsRequest;
 import com.fonyou.studentexam.payload.request.ExamResponsesRequest;
 import com.fonyou.studentexam.payload.request.ExamScheduleRequest;
 import com.fonyou.studentexam.payload.request.QuestionRequest;
+import com.fonyou.studentexam.payload.response.ExamGradeResponse;
+import com.fonyou.studentexam.payload.response.ExamResponse;
+import com.fonyou.studentexam.payload.response.QuestionResponse;
+import com.fonyou.studentexam.payload.response.StudentResponseResponse;
 import com.fonyou.studentexam.repositories.*;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
@@ -13,6 +17,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
@@ -74,7 +79,7 @@ public class ExamService {
         return examScheduleRepository.save(examScheduleEntity);
     }
 
-    public ExamGradeEntity submitExamResponses(Long examScheduleId, List<ExamResponsesRequest> examResponsesRequestList) {
+    public ExamGradeResponse submitExamResponses(Long examScheduleId, List<ExamResponsesRequest> examResponsesRequestList) {
         ExamScheduleEntity examScheduleEntity = examScheduleRepository.findById(examScheduleId)
                 .orElseThrow(() -> new BusinessException("Exam scheduled has not been found"));
 
@@ -105,11 +110,45 @@ public class ExamService {
                 .build();
 
         studentResponseRepository.saveAll(studentResponseEntityList);
-        return examGradeRepository.save(examGradeEntitySaved);
-
+        examGradeRepository.save(examGradeEntitySaved);
+        return examGradeEntityToExamGradeResponse(examGradeEntitySaved,studentResponseEntityList);
     }
 
     public ExamGradeEntity getExamGrade(Long examScheduleId) {
         return new ExamGradeEntity();
     }
+
+    public ExamResponse examEntityToExamResponse(ExamEntity examEntity){
+        return ExamResponse.builder()
+                .id(examEntity.getId())
+                .examName(examEntity.getExamName())
+                .questions(examEntity.getQuestions().stream().map(this::questionEntityToQuestionResponse).collect(Collectors.toList()))
+                .build();
+    }
+    public StudentResponseResponse studentResponseEntityToStudentResponseResponse(StudentResponseEntity studentResponseEntity){
+        return StudentResponseResponse.builder()
+                .question(studentResponseEntity.getQuestion().getQuestion())
+                .studentResponse(studentResponseEntity.getStudentResponse())
+                .build();
+    }
+    public QuestionResponse questionEntityToQuestionResponse(QuestionEntity questionEntity){
+        return QuestionResponse.builder()
+                .question(questionEntity.getQuestion())
+                .choice1(questionEntity.getChoice1())
+                .choice2(questionEntity.getChoice2())
+                .choice3(questionEntity.getChoice3())
+                .choice4(questionEntity.getChoice4())
+                .correctChoice(questionEntity.getCorrectChoice())
+                .score(questionEntity.getScore())
+                .build();
+    }
+    public ExamGradeResponse examGradeEntityToExamGradeResponse(ExamGradeEntity examGradeEntity,List<StudentResponseEntity> studentResponseEntityList){
+        return ExamGradeResponse.builder()
+                .exam(examEntityToExamResponse(examGradeEntity.getExamSchedule().getExam()))
+                .response(studentResponseEntityList.stream().map(this::studentResponseEntityToStudentResponseResponse).collect(Collectors.toList()))
+                .grade(examGradeEntity.getGrade())
+                .build();
+    }
+
+
 }
