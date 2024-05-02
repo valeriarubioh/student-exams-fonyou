@@ -8,32 +8,21 @@ import com.fonyou.studentexam.payload.request.ExamScheduleRequest;
 import com.fonyou.studentexam.payload.request.QuestionRequest;
 import com.fonyou.studentexam.repositories.*;
 import jakarta.transaction.Transactional;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @Service
+@AllArgsConstructor
 public class ExamService {
-
 
     private final ExamRepository examRepository;
     private final ExamScheduleRepository examScheduleRepository;
     private final QuestionRepository questionRepository;
     private final StudentRepository studentRepository;
     private final StudentResponseRepository studentResponseRepository;
-
-    public ExamService(ExamRepository examRepository,
-                       ExamScheduleRepository examScheduleRepository,
-                       QuestionRepository questionRepository,
-                       StudentRepository studentRepository,
-                       StudentResponseRepository studentResponseRepository) {
-        this.examRepository = examRepository;
-        this.examScheduleRepository = examScheduleRepository;
-        this.questionRepository = questionRepository;
-        this.studentRepository = studentRepository;
-        this.studentResponseRepository = studentResponseRepository;
-    }
 
     @Transactional
     public ExamEntity createExamQuestions(ExamQuestionsRequest examQuestionsRequestList) {
