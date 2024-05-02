@@ -2,7 +2,9 @@ package com.fonyou.studentexam.entities;
 import jakarta.persistence.*;
 import lombok.*;
 @Entity
-@Table(name = "student_responses")
+@Table(name = "student_responses", uniqueConstraints = {
+        @UniqueConstraint(name = "uniqueExamAndQuestion", columnNames = {"examScheduleId", "questionId"})
+})
 @Getter
 @Setter
 @Builder

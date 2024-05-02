@@ -45,7 +45,8 @@ CREATE TABLE student_responses (
     question_id BIGINT NOT NULL,
     student_response INT NOT NULL,
     FOREIGN KEY (exam_schedule_id) REFERENCES exam_schedules(id),
-    FOREIGN KEY (question_id) REFERENCES questions(id)
+    FOREIGN KEY (question_id) REFERENCES questions(id),
+    UNIQUE KEY student_response_uq (exam_schedule_id, question_id)
 );
 
 -- Create the exam_grades table

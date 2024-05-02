@@ -14,7 +14,7 @@ public class QuestionEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "examId", nullable = false)
     private ExamEntity exam;
 

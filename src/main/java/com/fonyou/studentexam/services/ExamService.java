@@ -1,16 +1,13 @@
 package com.fonyou.studentexam.services;
 
-import com.fonyou.studentexam.entities.ExamEntity;
-import com.fonyou.studentexam.entities.ExamGradeEntity;
-import com.fonyou.studentexam.entities.ExamScheduleEntity;
-import com.fonyou.studentexam.entities.QuestionEntity;
+import com.fonyou.studentexam.entities.*;
 import com.fonyou.studentexam.exceptions.BusinessException;
 import com.fonyou.studentexam.payload.request.ExamQuestionsRequest;
 import com.fonyou.studentexam.payload.request.ExamResponsesRequest;
 import com.fonyou.studentexam.payload.request.ExamScheduleRequest;
 import com.fonyou.studentexam.payload.request.QuestionRequest;
-import com.fonyou.studentexam.repositories.ExamRepository;
-import com.fonyou.studentexam.repositories.QuestionRepository;
+import com.fonyou.studentexam.repositories.*;
+import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -21,14 +18,24 @@ public class ExamService {
 
 
     private final ExamRepository examRepository;
+    private final ExamScheduleRepository examScheduleRepository;
     private final QuestionRepository questionRepository;
+    private final StudentRepository studentRepository;
+    private final StudentResponseRepository studentResponseRepository;
 
-    public ExamService(ExamRepository examRepository, QuestionRepository questionRepository) {
+    public ExamService(ExamRepository examRepository,
+                       ExamScheduleRepository examScheduleRepository,
+                       QuestionRepository questionRepository,
+                       StudentRepository studentRepository,
+                       StudentResponseRepository studentResponseRepository) {
         this.examRepository = examRepository;
+        this.examScheduleRepository = examScheduleRepository;
         this.questionRepository = questionRepository;
+        this.studentRepository = studentRepository;
+        this.studentResponseRepository = studentResponseRepository;
     }
 
-
+    @Transactional
     public ExamEntity createExamQuestions(ExamQuestionsRequest examQuestionsRequestList) {
         ExamEntity examEntity = ExamEntity.builder()
                 .examName(examQuestionsRequestList.getExamName())
@@ -62,10 +69,41 @@ public class ExamService {
     }
 
     public ExamScheduleEntity createExamSchedule(ExamScheduleRequest examScheduleRequest) {
-        return new ExamScheduleEntity();
+        ExamEntity examEntity = examRepository.findById(examScheduleRequest.getExamId())
+                .orElseThrow(() -> new BusinessException("Exam id not found"));
+        StudentEntity studentEntity = studentRepository.findById(examScheduleRequest.getStudentId())
+                .orElseThrow(() -> new BusinessException("Student id not found"));
+
+        ExamScheduleEntity examScheduleEntity = ExamScheduleEntity.builder()
+                .exam(examEntity)
+                .student(studentEntity)
+                .startDateTime(examScheduleRequest.getStartDateTime())
+                .endDateTime(examScheduleRequest.getEndDateTime())
+                .build();
+
+        return examScheduleRepository.save(examScheduleEntity);
     }
 
-    public void submitExamResponses(List<ExamResponsesRequest> examResponsesRequestList) {
+    public List<StudentResponseEntity> submitExamResponses(Long examScheduleId, List<ExamResponsesRequest> examResponsesRequestList) {
+        ExamScheduleEntity examScheduleEntity = examScheduleRepository.findById(examScheduleId)
+                .orElseThrow(() -> new BusinessException("Exam scheduled has not been found"));
+
+        List<QuestionEntity> questionEntities = examScheduleEntity.getExam().getQuestions();
+
+        List<StudentResponseEntity> studentResponseEntityList = examResponsesRequestList.stream().map(examResponsesRequest -> {
+                    QuestionEntity questionEntityFound = questionEntities.stream()
+                            .filter(questionEntity -> questionEntity.getId().equals(examResponsesRequest.getQuestionId()))
+                            .findFirst()
+                            .orElseThrow(() -> new BusinessException("Question id given not found in the Exam"));
+                    return StudentResponseEntity.builder().examSchedule(examScheduleEntity)
+                            .studentResponse(examResponsesRequest.getStudentResponse())
+                            .examSchedule(examScheduleEntity)
+                            .question(questionEntityFound)
+                            .build();
+                }
+        ).toList();
+
+        return studentResponseRepository.saveAll(studentResponseEntityList);
     }
 
     public ExamGradeEntity getExamGrade(Long examScheduleId) {

@@ -1,7 +1,9 @@
 package com.fonyou.studentexam.controllers;
 
+import com.fonyou.studentexam.entities.ExamEntity;
 import com.fonyou.studentexam.entities.ExamGradeEntity;
 import com.fonyou.studentexam.entities.ExamScheduleEntity;
+import com.fonyou.studentexam.entities.StudentResponseEntity;
 import com.fonyou.studentexam.payload.request.ExamResponsesRequest;
 import com.fonyou.studentexam.payload.request.ExamScheduleRequest;
 import com.fonyou.studentexam.services.ExamService;
@@ -26,10 +28,11 @@ public class ExamScheduleController {
     }
 
     @PostMapping("/{examScheduleId}/responses")
-    public ResponseEntity<ExamScheduleEntity> createExam(@PathVariable("examScheduleId") Long examScheduleId,
-                                                         @RequestBody @Valid List<ExamResponsesRequest> examResponsesRequestList) {
-        examService.submitExamResponses(examResponsesRequestList);
-        return null;
+    public ResponseEntity<List<StudentResponseEntity>> submitExam(@PathVariable("examScheduleId") @Valid Long examScheduleId,
+                                                 @RequestBody @Valid List<ExamResponsesRequest> examResponsesRequestList) {
+        List<StudentResponseEntity> responseObj = examService.submitExamResponses(examScheduleId, examResponsesRequestList);
+        return ResponseEntity.ok(responseObj);
+
     }
 
 

@@ -1,10 +1,6 @@
 package com.fonyou.studentexam.payload.request;
 
-import com.fonyou.studentexam.entities.ExamEntity;
-import com.fonyou.studentexam.entities.StudentEntity;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.*;
 import lombok.Builder;
 import lombok.Data;
 
@@ -14,12 +10,14 @@ import java.time.LocalDateTime;
 @Builder
 public class ExamScheduleRequest {
 
-    @NotEmpty
+    @NotNull
+    @Positive
     private Long examId;
-    @NotEmpty
+    @NotNull
+    @Positive
     private Long studentId;
-    @NotEmpty
+    @FutureOrPresent
     private LocalDateTime startDateTime;
-    @NotEmpty
+    @FutureOrPresent
     private LocalDateTime endDateTime;
 }
