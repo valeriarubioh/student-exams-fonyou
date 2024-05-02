@@ -22,17 +22,19 @@ public class ExamService {
     private final QuestionRepository questionRepository;
     private final StudentRepository studentRepository;
     private final StudentResponseRepository studentResponseRepository;
+    private final ExamGradeRepository examGradeRepository;
 
     public ExamService(ExamRepository examRepository,
                        ExamScheduleRepository examScheduleRepository,
                        QuestionRepository questionRepository,
                        StudentRepository studentRepository,
-                       StudentResponseRepository studentResponseRepository) {
+                       StudentResponseRepository studentResponseRepository, ExamGradeRepository examGradeRepository) {
         this.examRepository = examRepository;
         this.examScheduleRepository = examScheduleRepository;
         this.questionRepository = questionRepository;
         this.studentRepository = studentRepository;
         this.studentResponseRepository = studentResponseRepository;
+        this.examGradeRepository = examGradeRepository;
     }
 
     @Transactional
@@ -84,7 +86,7 @@ public class ExamService {
         return examScheduleRepository.save(examScheduleEntity);
     }
 
-    public List<StudentResponseEntity> submitExamResponses(Long examScheduleId, List<ExamResponsesRequest> examResponsesRequestList) {
+    public ExamGradeEntity submitExamResponses(Long examScheduleId, List<ExamResponsesRequest> examResponsesRequestList) {
         ExamScheduleEntity examScheduleEntity = examScheduleRepository.findById(examScheduleId)
                 .orElseThrow(() -> new BusinessException("Exam scheduled has not been found"));
 
@@ -95,7 +97,7 @@ public class ExamService {
                             .filter(questionEntity -> questionEntity.getId().equals(examResponsesRequest.getQuestionId()))
                             .findFirst()
                             .orElseThrow(() -> new BusinessException("Question id given not found in the Exam"));
-                    return StudentResponseEntity.builder().examSchedule(examScheduleEntity)
+                    return StudentResponseEntity.builder()
                             .studentResponse(examResponsesRequest.getStudentResponse())
                             .examSchedule(examScheduleEntity)
                             .question(questionEntityFound)
@@ -103,7 +105,20 @@ public class ExamService {
                 }
         ).toList();
 
-        return studentResponseRepository.saveAll(studentResponseEntityList);
+        int totalScore = 0;
+        for (StudentResponseEntity studentResponseEntity : studentResponseEntityList) {
+            if (studentResponseEntity.getStudentResponse() == studentResponseEntity.getQuestion().getCorrectChoice()) {
+                totalScore += studentResponseEntity.getQuestion().getScore();
+            }
+        }
+        ExamGradeEntity examGradeEntitySaved = ExamGradeEntity.builder()
+                .examSchedule(examScheduleEntity)
+                .grade(totalScore)
+                .build();
+
+        studentResponseRepository.saveAll(studentResponseEntityList);
+        return examGradeRepository.save(examGradeEntitySaved);
+
     }
 
     public ExamGradeEntity getExamGrade(Long examScheduleId) {

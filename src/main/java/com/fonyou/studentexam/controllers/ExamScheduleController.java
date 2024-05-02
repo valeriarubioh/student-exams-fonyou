@@ -28,9 +28,9 @@ public class ExamScheduleController {
     }
 
     @PostMapping("/{examScheduleId}/responses")
-    public ResponseEntity<List<StudentResponseEntity>> submitExam(@PathVariable("examScheduleId") @Valid Long examScheduleId,
+    public ResponseEntity<ExamGradeEntity> submitExam(@PathVariable("examScheduleId") @Valid Long examScheduleId,
                                                  @RequestBody @Valid List<ExamResponsesRequest> examResponsesRequestList) {
-        List<StudentResponseEntity> responseObj = examService.submitExamResponses(examScheduleId, examResponsesRequestList);
+        ExamGradeEntity responseObj = examService.submitExamResponses(examScheduleId, examResponsesRequestList);
         return ResponseEntity.ok(responseObj);
 
     }
