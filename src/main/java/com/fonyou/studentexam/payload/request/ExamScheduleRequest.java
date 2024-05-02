@@ -10,11 +10,9 @@ import java.time.LocalDateTime;
 @Builder
 public class ExamScheduleRequest {
 
-    @NotNull
-    @Positive
+    @Min(1)
     private Long examId;
-    @NotNull
-    @Positive
+    @Min(1)
     private Long studentId;
     @FutureOrPresent
     private LocalDateTime startDateTime;

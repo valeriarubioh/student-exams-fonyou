@@ -6,7 +6,6 @@ import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Positive;
 import lombok.Builder;
 import lombok.Data;
-import org.hibernate.validator.constraints.Range;
 
 @Data
 @Builder
@@ -21,7 +20,8 @@ public class QuestionRequest {
     private String choice3;
     @NotEmpty
     private String choice4;
-    @Range(min = 1, max = 4)
+    @Min(value = 1, message = "Choice selected not found")
+    @Max(value = 4, message = "Choice selected not found")
     private int correctChoice;
     @Positive
     @Min(1)
