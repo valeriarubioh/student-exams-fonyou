@@ -20,7 +20,6 @@ public class ExamController {
 
     @PostMapping
     public ResponseEntity<ExamEntity> createExamQuestions(@RequestBody @Valid ExamQuestionsRequest examQuestionsRequestList) {
-        examService.createExamQuestions(examQuestionsRequestList);
         return new ResponseEntity<>(examService.createExamQuestions(examQuestionsRequestList),HttpStatus.CREATED);
     }
 }
