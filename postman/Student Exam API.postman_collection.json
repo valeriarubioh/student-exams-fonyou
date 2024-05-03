@@ -1,0 +1,669 @@
+{
+	"info": {
+		"_postman_id": "8ca88b0c-7c3e-42ab-abff-de06ed4ed8e7",
+		"name": "Student Exam API",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "14432994"
+	},
+	"item": [
+		{
+			"name": "api",
+			"item": [
+				{
+					"name": "v1",
+					"item": [
+						{
+							"name": "students",
+							"item": [
+								{
+									"name": "1. create Student",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"var jsonData = pm.response.json();\r",
+													"var studentId = jsonData.id;\r",
+													"console.log(studentId)\r",
+													"pm.collectionVariables.set(\"studentId\", studentId);"
+												],
+												"type": "text/javascript",
+												"packages": {}
+											}
+										}
+									],
+									"request": {
+										"method": "POST",
+										"header": [
+											{
+												"key": "Content-Type",
+												"value": "application/json",
+												"uuid": "1782d370-a2a2-4295-b08d-f37ec3dad3c5"
+											},
+											{
+												"key": "Accept",
+												"value": "*/*",
+												"uuid": "64b75566-27ae-467e-9406-51cda054b99c"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n  \"age\": 20,\n  \"city\": \"Bogota\",\n  \"cityTimeZone\": \"America/Bogota\",\n  \"name\": \"Pepe perez\"\n}",
+											"options": {
+												"raw": {
+													"headerFamily": "json",
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{baseUrl}}/api/v1/students",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"api",
+												"v1",
+												"students"
+											]
+										}
+									},
+									"response": [
+										{
+											"name": "OK",
+											"originalRequest": {
+												"method": "POST",
+												"header": [
+													{
+														"key": "Content-Type",
+														"value": "application/json"
+													},
+													{
+														"key": "Accept",
+														"value": "*/*"
+													}
+												],
+												"body": {
+													"mode": "raw",
+													"raw": "{\n  \"age\": \"<integer>\",\n  \"city\": \"<string>\",\n  \"cityTimeZone\": \"<string>\",\n  \"name\": \"<string>\"\n}",
+													"options": {
+														"raw": {
+															"headerFamily": "json",
+															"language": "json"
+														}
+													}
+												},
+												"url": {
+													"raw": "{{baseUrl}}/api/v1/students",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"api",
+														"v1",
+														"students"
+													]
+												}
+											},
+											"status": "OK",
+											"code": 200,
+											"_postman_previewlanguage": "text",
+											"header": [
+												{
+													"key": "Content-Type",
+													"value": "*/*"
+												}
+											],
+											"cookie": [],
+											"body": "{\n  \"id\": \"<long>\",\n  \"name\": \"<string>\",\n  \"age\": \"<integer>\",\n  \"city\": \"<string>\",\n  \"cityTimeZone\": \"<string>\"\n}"
+										}
+									]
+								}
+							]
+						},
+						{
+							"name": "exams",
+							"item": [
+								{
+									"name": "2. create Exam Questions",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"var jsonData = pm.response.json();\r",
+													"var examId = jsonData.id;\r",
+													"console.log(examId)\r",
+													"pm.collectionVariables.set(\"examId\", examId);"
+												],
+												"type": "text/javascript",
+												"packages": {}
+											}
+										}
+									],
+									"request": {
+										"method": "POST",
+										"header": [
+											{
+												"key": "Content-Type",
+												"value": "application/json",
+												"uuid": "f3a71241-cb2c-4e5e-8a6a-ef06eea9231f"
+											},
+											{
+												"key": "Accept",
+												"value": "*/*",
+												"uuid": "7a070a38-3834-476b-a8ab-1e303f845961"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n  \"examName\": \"Main Exam\",\n  \"questions\": [\n    {\n      \"choice1\": \"Question 1\",\n      \"choice2\": \"Question 2\",\n      \"choice3\": \"Question 3\",\n      \"choice4\": \"Question 4\",\n      \"question\": \"Question 1?\",\n      \"correctChoice\": \"3\",\n      \"score\": \"30\"\n    },\n    {\n      \"choice1\": \"Question 1.2\",\n      \"choice2\": \"Question 2.2\",\n      \"choice3\": \"Question 3.2\",\n      \"choice4\": \"Question 4.2\",\n      \"question\": \"Question 2?\",\n      \"correctChoice\": \"2\",\n      \"score\": \"70\"\n    }\n  ]\n}",
+											"options": {
+												"raw": {
+													"headerFamily": "json",
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{baseUrl}}/api/v1/exams",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"api",
+												"v1",
+												"exams"
+											]
+										}
+									},
+									"response": [
+										{
+											"name": "OK",
+											"originalRequest": {
+												"method": "POST",
+												"header": [
+													{
+														"key": "Content-Type",
+														"value": "application/json"
+													},
+													{
+														"key": "Accept",
+														"value": "*/*"
+													}
+												],
+												"body": {
+													"mode": "raw",
+													"raw": "{\n  \"examName\": \"<string>\",\n  \"questions\": [\n    {\n      \"choice1\": \"<string>\",\n      \"choice2\": \"<string>\",\n      \"choice3\": \"<string>\",\n      \"choice4\": \"<string>\",\n      \"question\": \"<string>\",\n      \"correctChoice\": \"<integer>\",\n      \"score\": \"<integer>\"\n    },\n    {\n      \"choice1\": \"<string>\",\n      \"choice2\": \"<string>\",\n      \"choice3\": \"<string>\",\n      \"choice4\": \"<string>\",\n      \"question\": \"<string>\",\n      \"correctChoice\": \"<integer>\",\n      \"score\": \"<integer>\"\n    }\n  ]\n}",
+													"options": {
+														"raw": {
+															"headerFamily": "json",
+															"language": "json"
+														}
+													}
+												},
+												"url": {
+													"raw": "{{baseUrl}}/api/v1/exams",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"api",
+														"v1",
+														"exams"
+													]
+												}
+											},
+											"status": "OK",
+											"code": 200,
+											"_postman_previewlanguage": "text",
+											"header": [
+												{
+													"key": "Content-Type",
+													"value": "*/*"
+												}
+											],
+											"cookie": [],
+											"body": "{\n  \"id\": \"<long>\",\n  \"examName\": \"<string>\",\n  \"questions\": [\n    {\n      \"id\": \"<long>\",\n      \"question\": \"<string>\",\n      \"choice1\": \"<string>\",\n      \"choice2\": \"<string>\",\n      \"choice3\": \"<string>\",\n      \"choice4\": \"<string>\",\n      \"correctChoice\": \"<integer>\",\n      \"score\": \"<integer>\"\n    },\n    {\n      \"id\": \"<long>\",\n      \"question\": \"<string>\",\n      \"choice1\": \"<string>\",\n      \"choice2\": \"<string>\",\n      \"choice3\": \"<string>\",\n      \"choice4\": \"<string>\",\n      \"correctChoice\": \"<integer>\",\n      \"score\": \"<integer>\"\n    }\n  ]\n}"
+										}
+									]
+								}
+							]
+						},
+						{
+							"name": "exam-schedules",
+							"item": [
+								{
+									"name": "{examScheduleId}",
+									"item": [
+										{
+											"name": "responses",
+											"item": [
+												{
+													"name": "4. submit Student Exam",
+													"event": [
+														{
+															"listen": "test",
+															"script": {
+																"exec": [
+																	"var jsonData = pm.response.json();\r",
+																	"var examGradeId = jsonData.examGradeId;\r",
+																	"console.log(examGradeId)\r",
+																	"pm.collectionVariables.set(\"examGradeId\", examGradeId);"
+																],
+																"type": "text/javascript",
+																"packages": {}
+															}
+														}
+													],
+													"request": {
+														"method": "POST",
+														"header": [
+															{
+																"key": "Content-Type",
+																"value": "application/json",
+																"uuid": "2ddc2ebb-7f59-4d92-89a0-e9997a516011"
+															},
+															{
+																"key": "Accept",
+																"value": "*/*",
+																"uuid": "fd81dab0-2b33-4feb-beea-eeff2f4ea0c2"
+															}
+														],
+														"body": {
+															"mode": "raw",
+															"raw": "[\n  {\n    \"questionId\": \"27\",\n    \"studentResponse\": \"2\"\n  },\n  {\n    \"questionId\": \"28\",\n    \"studentResponse\": \"3\"\n  }\n]",
+															"options": {
+																"raw": {
+																	"headerFamily": "json",
+																	"language": "json"
+																}
+															}
+														},
+														"url": {
+															"raw": "{{baseUrl}}/api/v1/exam-schedules/:examScheduleId/responses",
+															"host": [
+																"{{baseUrl}}"
+															],
+															"path": [
+																"api",
+																"v1",
+																"exam-schedules",
+																":examScheduleId",
+																"responses"
+															],
+															"variable": [
+																{
+																	"key": "examScheduleId",
+																	"value": "{{examScheduleId}}",
+																	"description": "(Required) ",
+																	"uuid": "a0eb0fca-ff39-414a-9afb-c1efcfaf1f27"
+																}
+															]
+														}
+													},
+													"response": [
+														{
+															"name": "OK",
+															"originalRequest": {
+																"method": "POST",
+																"header": [
+																	{
+																		"key": "Content-Type",
+																		"value": "application/json"
+																	},
+																	{
+																		"key": "Accept",
+																		"value": "*/*"
+																	}
+																],
+																"body": {
+																	"mode": "raw",
+																	"raw": "[\n  {\n    \"questionId\": \"<long>\",\n    \"studentResponse\": \"<integer>\"\n  },\n  {\n    \"questionId\": \"<long>\",\n    \"studentResponse\": \"<integer>\"\n  }\n]",
+																	"options": {
+																		"raw": {
+																			"headerFamily": "json",
+																			"language": "json"
+																		}
+																	}
+																},
+																"url": {
+																	"raw": "{{baseUrl}}/api/v1/exam-schedules/:examScheduleId/responses",
+																	"host": [
+																		"{{baseUrl}}"
+																	],
+																	"path": [
+																		"api",
+																		"v1",
+																		"exam-schedules",
+																		":examScheduleId",
+																		"responses"
+																	],
+																	"variable": [
+																		{
+																			"key": "examScheduleId"
+																		}
+																	]
+																}
+															},
+															"status": "OK",
+															"code": 200,
+															"_postman_previewlanguage": "text",
+															"header": [
+																{
+																	"key": "Content-Type",
+																	"value": "*/*"
+																}
+															],
+															"cookie": [],
+															"body": "{\n  \"examGradeId\": \"<long>\",\n  \"examScheduleId\": \"<long>\",\n  \"grade\": \"<integer>\",\n  \"examName\": \"<string>\",\n  \"questionsAndResponses\": [\n    {\n      \"question\": \"<string>\",\n      \"choice1\": \"<string>\",\n      \"choice2\": \"<string>\",\n      \"choice3\": \"<string>\",\n      \"choice4\": \"<string>\",\n      \"correctChoice\": \"<integer>\",\n      \"studentResponse\": \"<integer>\",\n      \"score\": \"<integer>\"\n    },\n    {\n      \"question\": \"<string>\",\n      \"choice1\": \"<string>\",\n      \"choice2\": \"<string>\",\n      \"choice3\": \"<string>\",\n      \"choice4\": \"<string>\",\n      \"correctChoice\": \"<integer>\",\n      \"studentResponse\": \"<integer>\",\n      \"score\": \"<integer>\"\n    }\n  ]\n}"
+														}
+													]
+												}
+											]
+										}
+									]
+								},
+								{
+									"name": "{examGradeId}",
+									"item": [
+										{
+											"name": "grade",
+											"item": [
+												{
+													"name": "5. get Exam Grade",
+													"event": [
+														{
+															"listen": "test",
+															"script": {
+																"exec": [
+																	""
+																],
+																"type": "text/javascript",
+																"packages": {}
+															}
+														}
+													],
+													"request": {
+														"method": "GET",
+														"header": [
+															{
+																"key": "Accept",
+																"value": "*/*",
+																"uuid": "f23e8084-cef5-4eca-be45-9f7e53e1de98"
+															}
+														],
+														"url": {
+															"raw": "{{baseUrl}}/api/v1/exam-schedules/:examGradeId/grade",
+															"host": [
+																"{{baseUrl}}"
+															],
+															"path": [
+																"api",
+																"v1",
+																"exam-schedules",
+																":examGradeId",
+																"grade"
+															],
+															"variable": [
+																{
+																	"key": "examGradeId",
+																	"value": "{{examGradeId}}",
+																	"description": "(Required) ",
+																	"uuid": "7a35ec78-ad9d-47f3-845a-9a4f313b9465"
+																}
+															]
+														}
+													},
+													"response": [
+														{
+															"name": "OK",
+															"originalRequest": {
+																"method": "GET",
+																"header": [
+																	{
+																		"key": "Accept",
+																		"value": "*/*"
+																	}
+																],
+																"url": {
+																	"raw": "{{baseUrl}}/api/v1/exam-schedules/:examGradeId/grade",
+																	"host": [
+																		"{{baseUrl}}"
+																	],
+																	"path": [
+																		"api",
+																		"v1",
+																		"exam-schedules",
+																		":examGradeId",
+																		"grade"
+																	],
+																	"variable": [
+																		{
+																			"key": "examGradeId"
+																		}
+																	]
+																}
+															},
+															"status": "OK",
+															"code": 200,
+															"_postman_previewlanguage": "text",
+															"header": [
+																{
+																	"key": "Content-Type",
+																	"value": "*/*"
+																}
+															],
+															"cookie": [],
+															"body": "{\n  \"examGradeId\": \"<long>\",\n  \"examScheduleId\": \"<long>\",\n  \"grade\": \"<integer>\",\n  \"examName\": \"<string>\",\n  \"questionsAndResponses\": [\n    {\n      \"question\": \"<string>\",\n      \"choice1\": \"<string>\",\n      \"choice2\": \"<string>\",\n      \"choice3\": \"<string>\",\n      \"choice4\": \"<string>\",\n      \"correctChoice\": \"<integer>\",\n      \"studentResponse\": \"<integer>\",\n      \"score\": \"<integer>\"\n    },\n    {\n      \"question\": \"<string>\",\n      \"choice1\": \"<string>\",\n      \"choice2\": \"<string>\",\n      \"choice3\": \"<string>\",\n      \"choice4\": \"<string>\",\n      \"correctChoice\": \"<integer>\",\n      \"studentResponse\": \"<integer>\",\n      \"score\": \"<integer>\"\n    }\n  ]\n}"
+														}
+													]
+												}
+											]
+										}
+									]
+								},
+								{
+									"name": "3. create Exam Schedule",
+									"event": [
+										{
+											"listen": "prerequest",
+											"script": {
+												"exec": [
+													"// https://www.30secondsofcode.org/js/s/iso-format-date-with-timezone/\r",
+													"// Pad a number to 2 digits\r",
+													"const pad = n => `${Math.floor(Math.abs(n))}`.padStart(2, '0');\r",
+													"// Get timezone offset in ISO format (+hh:mm or -hh:mm)\r",
+													"const getTimezoneOffset = date => {\r",
+													"  const tzOffset = -date.getTimezoneOffset();\r",
+													"  const diff = tzOffset >= 0 ? '+' : '-';\r",
+													"  return diff + pad(tzOffset / 60) + ':' + pad(tzOffset % 60);\r",
+													"};\r",
+													"\r",
+													"function toISOStringWithTimezone(date){\r",
+													"  return date.getFullYear() +\r",
+													"    '-' + pad(date.getMonth() + 1) +\r",
+													"    '-' + pad(date.getDate()) +\r",
+													"    'T' + pad(date.getHours()) +\r",
+													"    ':' + pad(date.getMinutes()) +\r",
+													"    ':' + pad(date.getSeconds());\r",
+													"};\r",
+													"\r",
+													"\r",
+													"\r",
+													"const startDateTime = new Date();\r",
+													"startDateTime.setSeconds(startDateTime.getSeconds() + 10);\r",
+													"// Set the end date and time to be one hour after the start date and time\r",
+													"const endDateTime = new Date(startDateTime.getTime() + (60 * 60 * 1000));\r",
+													"\r",
+													"\r",
+													"console.log(toISOStringWithTimezone(startDateTime))\r",
+													"console.log(toISOStringWithTimezone(endDateTime))\r",
+													"pm.collectionVariables.set(\"startDateTime\", toISOStringWithTimezone(startDateTime));\r",
+													"pm.collectionVariables.set(\"endDateTime\", toISOStringWithTimezone(endDateTime));"
+												],
+												"type": "text/javascript",
+												"packages": {}
+											}
+										},
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"var jsonData = pm.response.json();\r",
+													"var examScheduleId = jsonData.id;\r",
+													"console.log(examScheduleId)\r",
+													"pm.collectionVariables.set(\"examScheduleId\", examScheduleId);"
+												],
+												"type": "text/javascript",
+												"packages": {}
+											}
+										}
+									],
+									"request": {
+										"method": "POST",
+										"header": [
+											{
+												"key": "Content-Type",
+												"value": "application/json",
+												"uuid": "9c57d54c-5753-45b3-a97f-f3169cbbd18a"
+											},
+											{
+												"key": "Accept",
+												"value": "*/*",
+												"uuid": "67a3515d-915d-4a84-8b8c-a9acbdf05a8e"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n  \"examId\": {{examId}},\n  \"studentId\": {{studentId}},\n  \"startDateTime\": \"{{startDateTime}}\",\n  \"endDateTime\": \"{{endDateTime}}\"\n}",
+											"options": {
+												"raw": {
+													"headerFamily": "json",
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{baseUrl}}/api/v1/exam-schedules",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"api",
+												"v1",
+												"exam-schedules"
+											]
+										}
+									},
+									"response": [
+										{
+											"name": "OK",
+											"originalRequest": {
+												"method": "POST",
+												"header": [
+													{
+														"key": "Content-Type",
+														"value": "application/json"
+													},
+													{
+														"key": "Accept",
+														"value": "*/*"
+													}
+												],
+												"body": {
+													"mode": "raw",
+													"raw": "{\n  \"examId\": \"<long>\",\n  \"studentId\": \"<long>\",\n  \"startDateTime\": \"<dateTime>\",\n  \"endDateTime\": \"<dateTime>\"\n}",
+													"options": {
+														"raw": {
+															"headerFamily": "json",
+															"language": "json"
+														}
+													}
+												},
+												"url": {
+													"raw": "{{baseUrl}}/api/v1/exam-schedules",
+													"host": [
+														"{{baseUrl}}"
+													],
+													"path": [
+														"api",
+														"v1",
+														"exam-schedules"
+													]
+												}
+											},
+											"status": "OK",
+											"code": 200,
+											"_postman_previewlanguage": "text",
+											"header": [
+												{
+													"key": "Content-Type",
+													"value": "*/*"
+												}
+											],
+											"cookie": [],
+											"body": "{\n  \"id\": \"<long>\",\n  \"student\": {\n    \"id\": \"<long>\",\n    \"name\": \"<string>\",\n    \"age\": \"<integer>\",\n    \"city\": \"<string>\",\n    \"cityTimeZone\": \"<string>\"\n  },\n  \"idExam\": \"<long>\",\n  \"examName\": \"<string>\",\n  \"startDateTime\": \"<dateTime>\",\n  \"endDateTime\": \"<dateTime>\"\n}"
+										}
+									]
+								}
+							]
+						}
+					]
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "baseUrl",
+			"value": "http://localhost:8091"
+		},
+		{
+			"key": "studentId",
+			"value": ""
+		},
+		{
+			"key": "examId",
+			"value": ""
+		},
+		{
+			"key": "startDateTime",
+			"value": ""
+		},
+		{
+			"key": "endDateTime",
+			"value": ""
+		},
+		{
+			"key": "examScheduleId",
+			"value": ""
+		},
+		{
+			"key": "examGradeId",
+			"value": ""
+		}
+	]
+}
