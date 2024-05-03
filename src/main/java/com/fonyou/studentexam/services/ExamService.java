@@ -38,7 +38,7 @@ public class ExamService {
     }
 
     @Transactional
-    public ExamEntity createExamQuestions(ExamQuestionsRequest examQuestionsRequestList) {
+    public ExamResponse createExamQuestions(ExamQuestionsRequest examQuestionsRequestList) {
         ExamEntity examEntity = ExamEntity.builder()
                 .examName(examQuestionsRequestList.getExamName())
                 .build();
@@ -66,8 +66,13 @@ public class ExamService {
         if (totalScore != 100) {
             throw new BusinessException("The sum of scores for all questions should be 100");
         }
-        questionRepository.saveAll(questionEntities);
-        return examEntitySaved;
+        List<QuestionEntity> questionEntitiesSaved = questionRepository.saveAll(questionEntities);
+
+        return ExamResponse.builder()
+                .id(examEntitySaved.getId())
+                .examName(examEntitySaved.getExamName())
+                .questions(questionEntitiesSaved)
+                .build();
     }
 
     public ExamScheduleResponse createExamSchedule(ExamScheduleRequest examScheduleRequest) {
@@ -147,6 +152,20 @@ public class ExamService {
         List<StudentResponseEntity> studentResponseEntities = studentResponseRepository.saveAll(studentResponseEntityList);
         ExamGradeEntity examGradeEntitySaved = examGradeRepository.save(examGradeEntity);
 
+        return buildExamGradeResponse(questionEntities, studentResponseEntities, examGradeEntitySaved);
+    }
+
+    public ExamGradeResponse getExamGrade(Long examGradeId) {
+        ExamGradeEntity examGradeEntity = examGradeRepository.findById(examGradeId).orElseThrow(() -> new BusinessException("Exam grade not found"));
+        ExamScheduleEntity examScheduleEntity = examGradeEntity.getExamSchedule();
+        List<StudentResponseEntity> studentResponseEntities = studentResponseRepository.findByExamSchedule(examScheduleEntity);
+        List<QuestionEntity> questionEntities = examScheduleEntity.getExam().getQuestions();
+        return buildExamGradeResponse(questionEntities, studentResponseEntities, examGradeEntity);
+    }
+
+    public ExamGradeResponse buildExamGradeResponse(List<QuestionEntity> questionEntities,
+                                                    List<StudentResponseEntity> studentResponseEntities,
+                                                    ExamGradeEntity examGradeEntity) {
         List<QuestionAndResponse> questionAndResponsesList = new ArrayList<>();
         for (QuestionEntity questionEntity : questionEntities) {
             for (StudentResponseEntity studentResponseEntity : studentResponseEntities) {
@@ -166,45 +185,12 @@ public class ExamService {
                 }
             }
         }
-
         return ExamGradeResponse.builder()
-                .examGradeId(examGradeEntitySaved.getId())
-                .grade(examGradeEntitySaved.getGrade())
-                .examName(examScheduleEntity.getExam().getExamName())
+                .examGradeId(examGradeEntity.getId())
+                .examScheduleId(examGradeEntity.getExamSchedule().getId())
+                .grade(examGradeEntity.getGrade())
+                .examName(examGradeEntity.getExamSchedule().getExam().getExamName())
                 .questionsAndResponses(questionAndResponsesList)
                 .build();
     }
-
-    public ExamGradeEntity getExamGrade(Long examScheduleId) {
-        return new ExamGradeEntity();
-    }
-
-    public ExamResponse examEntityToExamResponse(ExamEntity examEntity) {
-        return ExamResponse.builder()
-                .id(examEntity.getId())
-                .examName(examEntity.getExamName())
-                .questions(examEntity.getQuestions().stream().map(this::questionEntityToQuestionResponse).collect(Collectors.toList()))
-                .build();
-    }
-
-    public StudentResponseResponse studentResponseEntityToStudentResponseResponse(StudentResponseEntity studentResponseEntity) {
-        return StudentResponseResponse.builder()
-                .question(studentResponseEntity.getQuestion().getQuestion())
-                .studentResponse(studentResponseEntity.getStudentResponse())
-                .build();
-    }
-
-    public QuestionResponse questionEntityToQuestionResponse(QuestionEntity questionEntity) {
-        return QuestionResponse.builder()
-                .question(questionEntity.getQuestion())
-                .choice1(questionEntity.getChoice1())
-                .choice2(questionEntity.getChoice2())
-                .choice3(questionEntity.getChoice3())
-                .choice4(questionEntity.getChoice4())
-                .correctChoice(questionEntity.getCorrectChoice())
-                .score(questionEntity.getScore())
-                .build();
-    }
-
-
 }

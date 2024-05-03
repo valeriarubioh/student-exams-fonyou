@@ -2,6 +2,7 @@ package com.fonyou.studentexam.controllers;
 
 import com.fonyou.studentexam.entities.ExamEntity;
 import com.fonyou.studentexam.payload.request.ExamQuestionsRequest;
+import com.fonyou.studentexam.payload.response.ExamResponse;
 import com.fonyou.studentexam.services.ExamService;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
@@ -20,7 +21,7 @@ public class ExamController {
     private final ExamService examService;
 
     @PostMapping
-    public ResponseEntity<ExamEntity> createExamQuestions(@RequestBody @Valid ExamQuestionsRequest examQuestionsRequestList) {
+    public ResponseEntity<ExamResponse> createExamQuestions(@RequestBody @Valid ExamQuestionsRequest examQuestionsRequestList) {
         return new ResponseEntity<>(examService.createExamQuestions(examQuestionsRequestList),HttpStatus.CREATED);
     }
 }

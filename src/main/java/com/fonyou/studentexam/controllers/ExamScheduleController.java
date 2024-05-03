@@ -35,9 +35,9 @@ public class ExamScheduleController {
     }
 
 
-    @GetMapping("/{examScheduleId}/grade")
-    public ResponseEntity<ExamGradeEntity> getExamGrade(@PathVariable("examScheduleId") Long examScheduleId) {
-        return ResponseEntity.ok(examService.getExamGrade(examScheduleId));
+    @GetMapping("/{examGradeId}/grade")
+    public ResponseEntity<ExamGradeResponse> getExamGrade(@PathVariable("examGradeId") Long examGradeId) {
+        return ResponseEntity.ok(examService.getExamGrade(examGradeId));
     }
 
 }

@@ -5,6 +5,7 @@ import com.fonyou.studentexam.entities.QuestionEntity;
 import com.fonyou.studentexam.exceptions.BusinessException;
 import com.fonyou.studentexam.payload.request.ExamQuestionsRequest;
 import com.fonyou.studentexam.payload.request.QuestionRequest;
+import com.fonyou.studentexam.payload.response.ExamResponse;
 import com.fonyou.studentexam.repositories.ExamRepository;
 import com.fonyou.studentexam.repositories.QuestionRepository;
 import org.junit.jupiter.api.DisplayName;
@@ -107,11 +108,11 @@ class createExamQuestionsTest {
         when(examRepository.save(any(ExamEntity.class))).thenReturn(examEntity);
         when(questionRepository.saveAll(anyList())).thenReturn(questionEntities);
 
-        ExamEntity result = examService.createExamQuestions(request);
+        ExamResponse result = examService.createExamQuestions(request);
 
         assertThat(result)
                 .isEqualTo(examEntity)
-                .extracting(ExamEntity::getId, ExamEntity::getExamName, ExamEntity::getQuestions)
+                .extracting(ExamResponse::getId, ExamResponse::getExamName, ExamResponse::getQuestions)
                 .containsExactly(examEntity.getId(), examEntity.getExamName(), examEntity.getQuestions());
     }
 

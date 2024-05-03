@@ -9,6 +9,7 @@ import java.util.List;
 @Builder
 public class ExamGradeResponse {
     private Long examGradeId;
+    private Long examScheduleId;
     private int grade;
     private String examName;
     private List<QuestionAndResponse> questionsAndResponses;
