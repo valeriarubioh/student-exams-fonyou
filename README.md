@@ -44,6 +44,11 @@ The available endpoints are:
 - POST `/api/v1/exam-schedules/:examScheduleId/responses`: Send data for responding exam questions. (Use the query parameter examScheduleId to identify the exam schedule).
 - GET `/api/v1/exam-schedules/:examScheduleId/grade`: Get the grade based on the student's exam responses. (Use the query parameter examScheduleId to identify the exam schedule).
 
+Additionally:
+
+Postman Collection: In the "postman" folder, you'll find a collection that you can import to easily test the endpoints.
+Documentation Folder: Inside the "documentation" folder, you can learn the steps to test the collection effectively.
+
 ## Additional Resources
 
 Docker Compose with MySQL and PhpMyAdmin: https://tecadmin.net/docker-compose-for-mysql-with-phpmyadmin/
