@@ -6,7 +6,10 @@ import com.fonyou.studentexam.payload.request.ExamQuestionsRequest;
 import com.fonyou.studentexam.payload.request.ExamResponsesRequest;
 import com.fonyou.studentexam.payload.request.ExamScheduleRequest;
 import com.fonyou.studentexam.payload.request.QuestionRequest;
-import com.fonyou.studentexam.payload.response.*;
+import com.fonyou.studentexam.payload.response.ExamGradeResponse;
+import com.fonyou.studentexam.payload.response.ExamResponse;
+import com.fonyou.studentexam.payload.response.ExamScheduleResponse;
+import com.fonyou.studentexam.payload.response.QuestionAndResponse;
 import com.fonyou.studentexam.repositories.*;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
@@ -18,7 +21,6 @@ import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
@@ -80,6 +82,12 @@ public class ExamService {
                 .orElseThrow(() -> new BusinessException("Exam id not found"));
         StudentEntity studentEntity = studentRepository.findById(examScheduleRequest.getStudentId())
                 .orElseThrow(() -> new BusinessException("Student id not found"));
+
+        List<ExamScheduleEntity> examScheduleEntityList = examScheduleRepository.findByExamAndStudent(examEntity, studentEntity);
+
+        if (!examScheduleEntityList.isEmpty()) {
+            throw new BusinessException("Student has scheduled this exam before, try with another exam");
+        }
 
         ExamScheduleEntity examScheduleEntity = ExamScheduleEntity.builder()
                 .exam(examEntity)
