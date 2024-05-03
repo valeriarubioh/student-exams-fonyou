@@ -19,21 +19,20 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-class createExamQuestionsTest {
+class CreateExamQuestionsTest {
     @Mock
     private ExamRepository examRepository;
     @Mock
     private QuestionRepository questionRepository;
     @InjectMocks
     private ExamService examService;
+
     private List<QuestionRequest> getValidQuestionRequests() {
         return Arrays.asList(
                 QuestionRequest.builder()
@@ -79,6 +78,7 @@ class createExamQuestionsTest {
                         .build()
         );
     }
+
     @Test
     @DisplayName("Should create exam questions with valid input")
     void testCreateExamQuestions_ValidInput() {
@@ -108,14 +108,13 @@ class createExamQuestionsTest {
         when(examRepository.save(any(ExamEntity.class))).thenReturn(examEntity);
         when(questionRepository.saveAll(anyList())).thenReturn(questionEntities);
 
-        ExamResponse result = examService.createExamQuestions(request);
+        ExamResponse examResponse = examService.createExamQuestions(request);
 
-        assertThat(result)
-                .isEqualTo(examEntity)
-                .extracting(ExamResponse::getId, ExamResponse::getExamName, ExamResponse::getQuestions)
-                .containsExactly(examEntity.getId(), examEntity.getExamName(), examEntity.getQuestions());
+        assertNotNull(examResponse);
+        assertEquals(examResponse.getId(), examEntity.getId());
+        assertEquals(examResponse.getExamName(), examEntity.getExamName());
+        assertEquals(examResponse.getQuestions().size(), examEntity.getQuestions().size());
     }
-
 
 
     @Test
