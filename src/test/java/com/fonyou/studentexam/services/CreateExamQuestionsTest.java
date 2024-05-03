@@ -111,9 +111,9 @@ class CreateExamQuestionsTest {
         ExamResponse examResponse = examService.createExamQuestions(request);
 
         assertNotNull(examResponse);
-        assertEquals(examResponse.getId(), examEntity.getId());
-        assertEquals(examResponse.getExamName(), examEntity.getExamName());
-        assertEquals(examResponse.getQuestions().size(), examEntity.getQuestions().size());
+        assertEquals(examEntity.getId(), examResponse.getId());
+        assertEquals(examEntity.getExamName(), examResponse.getExamName());
+        assertEquals(examEntity.getQuestions().size(), examResponse.getQuestions().size());
     }
 
 
