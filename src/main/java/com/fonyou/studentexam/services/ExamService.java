@@ -6,10 +6,7 @@ import com.fonyou.studentexam.payload.request.ExamQuestionsRequest;
 import com.fonyou.studentexam.payload.request.ExamResponsesRequest;
 import com.fonyou.studentexam.payload.request.ExamScheduleRequest;
 import com.fonyou.studentexam.payload.request.QuestionRequest;
-import com.fonyou.studentexam.payload.response.ExamGradeResponse;
-import com.fonyou.studentexam.payload.response.ExamResponse;
-import com.fonyou.studentexam.payload.response.QuestionResponse;
-import com.fonyou.studentexam.payload.response.StudentResponseResponse;
+import com.fonyou.studentexam.payload.response.*;
 import com.fonyou.studentexam.repositories.*;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
@@ -63,7 +60,7 @@ public class ExamService {
         return examEntitySaved;
     }
 
-    public ExamScheduleEntity createExamSchedule(ExamScheduleRequest examScheduleRequest) {
+    public ExamScheduleResponse createExamSchedule(ExamScheduleRequest examScheduleRequest) {
         ExamEntity examEntity = examRepository.findById(examScheduleRequest.getExamId())
                 .orElseThrow(() -> new BusinessException("Exam id not found"));
         StudentEntity studentEntity = studentRepository.findById(examScheduleRequest.getStudentId())
@@ -76,7 +73,15 @@ public class ExamService {
                 .endDateTime(examScheduleRequest.getEndDateTime())
                 .build();
 
-        return examScheduleRepository.save(examScheduleEntity);
+        ExamScheduleEntity save = examScheduleRepository.save(examScheduleEntity);
+        return ExamScheduleResponse.builder()
+                .id(save.getId())
+                .idExam(save.getExam().getId())
+                .examName(save.getExam().getExamName())
+                .student(save.getStudent())
+                .startDateTime(save.getStartDateTime())
+                .endDateTime(save.getEndDateTime())
+                .build();
     }
 
     public ExamGradeResponse submitExamResponses(Long examScheduleId, List<ExamResponsesRequest> examResponsesRequestList) {

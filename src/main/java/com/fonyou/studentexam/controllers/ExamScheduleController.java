@@ -1,15 +1,13 @@
 package com.fonyou.studentexam.controllers;
 
-import com.fonyou.studentexam.entities.ExamEntity;
 import com.fonyou.studentexam.entities.ExamGradeEntity;
-import com.fonyou.studentexam.entities.ExamScheduleEntity;
-import com.fonyou.studentexam.entities.StudentResponseEntity;
 import com.fonyou.studentexam.payload.request.ExamResponsesRequest;
 import com.fonyou.studentexam.payload.request.ExamScheduleRequest;
 import com.fonyou.studentexam.payload.response.ExamGradeResponse;
+import com.fonyou.studentexam.payload.response.ExamScheduleResponse;
 import com.fonyou.studentexam.services.ExamService;
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -17,15 +15,15 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/exam-schedules")
+@AllArgsConstructor
 public class ExamScheduleController {
 
-    @Autowired
-    private ExamService examService;
+    private final ExamService examService;
 
     @PostMapping
-    public ResponseEntity<ExamScheduleEntity> createExam(@RequestBody @Valid ExamScheduleRequest examScheduleRequest) {
-        ExamScheduleEntity examScheduleEntity = examService.createExamSchedule(examScheduleRequest);
-        return ResponseEntity.ok(examScheduleEntity);
+    public ResponseEntity<ExamScheduleResponse> createExam(@RequestBody @Valid ExamScheduleRequest examScheduleRequest) {
+        ExamScheduleResponse examScheduleResponse = examService.createExamSchedule(examScheduleRequest);
+        return ResponseEntity.ok(examScheduleResponse);
     }
 
     @PostMapping("/{examScheduleId}/responses")
