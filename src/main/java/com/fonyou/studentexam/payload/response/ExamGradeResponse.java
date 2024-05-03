@@ -8,7 +8,8 @@ import java.util.List;
 @Data
 @Builder
 public class ExamGradeResponse {
-    private ExamResponse exam;
-    private List<StudentResponseResponse> response;
+    private Long examGradeId;
     private int grade;
+    private String examName;
+    private List<QuestionAndResponse> questionsAndResponses;
 }

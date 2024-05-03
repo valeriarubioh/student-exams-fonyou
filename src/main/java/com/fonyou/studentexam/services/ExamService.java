@@ -10,22 +10,32 @@ import com.fonyou.studentexam.payload.response.*;
 import com.fonyou.studentexam.repositories.*;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
 
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
+@Log4j2
 public class ExamService {
 
+    public static final String AMERICA_BOGOTA = "America/Bogota";
     private final ExamRepository examRepository;
     private final ExamScheduleRepository examScheduleRepository;
     private final QuestionRepository questionRepository;
     private final StudentRepository studentRepository;
     private final StudentResponseRepository studentResponseRepository;
     private final ExamGradeRepository examGradeRepository;
+
+    public static boolean isInRange(ZonedDateTime dateTime, ZonedDateTime startDate, ZonedDateTime endDate) {
+        return dateTime.isAfter(startDate.minusNanos(1)) && dateTime.isBefore(endDate.plusNanos(1));
+    }
 
     @Transactional
     public ExamEntity createExamQuestions(ExamQuestionsRequest examQuestionsRequestList) {
@@ -84,9 +94,29 @@ public class ExamService {
                 .build();
     }
 
+    @Transactional
     public ExamGradeResponse submitExamResponses(Long examScheduleId, List<ExamResponsesRequest> examResponsesRequestList) {
         ExamScheduleEntity examScheduleEntity = examScheduleRepository.findById(examScheduleId)
                 .orElseThrow(() -> new BusinessException("Exam scheduled has not been found"));
+
+        Optional<ExamGradeEntity> examGradeEntityOptional = examGradeRepository.findByExamScheduleId(examScheduleId);
+        if (examGradeEntityOptional.isPresent()) {
+            throw new BusinessException("Exam has been submitted already");
+        }
+
+        ZoneId studentZoneId = ZoneId.of(examScheduleEntity.getStudent().getCityTimeZone());
+        ZonedDateTime studentCurrentDateTime = ZonedDateTime.now(studentZoneId);
+
+        ZonedDateTime startDateTime = examScheduleEntity.getStartDateTime().atZone(ZoneId.of(AMERICA_BOGOTA));
+        ZonedDateTime endDateTime = examScheduleEntity.getEndDateTime().atZone(ZoneId.of(AMERICA_BOGOTA));
+        ZonedDateTime startDateTimeWithStudentTimeZone = startDateTime.withZoneSameInstant(studentZoneId);
+        ZonedDateTime endDateTimeWithStudentTimeZone = endDateTime.withZoneSameInstant(studentZoneId);
+
+        if (!isInRange(studentCurrentDateTime, startDateTimeWithStudentTimeZone, endDateTimeWithStudentTimeZone)) {
+            log.info("{} is not within the range.", studentCurrentDateTime);
+            throw new BusinessException("Exam date time has expired, please reschedule the exam");
+        }
+        log.info("{} is within the range of {} to {}", studentCurrentDateTime, startDateTimeWithStudentTimeZone, endDateTimeWithStudentTimeZone);
 
         List<QuestionEntity> questionEntities = examScheduleEntity.getExam().getQuestions();
 
@@ -109,34 +139,62 @@ public class ExamService {
                 totalScore += studentResponseEntity.getQuestion().getScore();
             }
         }
-        ExamGradeEntity examGradeEntitySaved = ExamGradeEntity.builder()
+        ExamGradeEntity examGradeEntity = ExamGradeEntity.builder()
                 .examSchedule(examScheduleEntity)
                 .grade(totalScore)
                 .build();
 
-        studentResponseRepository.saveAll(studentResponseEntityList);
-        examGradeRepository.save(examGradeEntitySaved);
-        return examGradeEntityToExamGradeResponse(examGradeEntitySaved,studentResponseEntityList);
+        List<StudentResponseEntity> studentResponseEntities = studentResponseRepository.saveAll(studentResponseEntityList);
+        ExamGradeEntity examGradeEntitySaved = examGradeRepository.save(examGradeEntity);
+
+        List<QuestionAndResponse> questionAndResponsesList = new ArrayList<>();
+        for (QuestionEntity questionEntity : questionEntities) {
+            for (StudentResponseEntity studentResponseEntity : studentResponseEntities) {
+                if (questionEntity.getId().equals(studentResponseEntity.getQuestion().getId())) {
+                    QuestionAndResponse questionAndResponse = QuestionAndResponse.builder()
+                            .question(questionEntity.getQuestion())
+                            .choice1(questionEntity.getChoice1())
+                            .choice2(questionEntity.getChoice2())
+                            .choice3(questionEntity.getChoice3())
+                            .choice4(questionEntity.getChoice4())
+                            .correctChoice(questionEntity.getCorrectChoice())
+                            .studentResponse(studentResponseEntity.getStudentResponse())
+                            .score(questionEntity.getScore())
+                            .build();
+                    questionAndResponsesList.add(questionAndResponse);
+                    break;
+                }
+            }
+        }
+
+        return ExamGradeResponse.builder()
+                .examGradeId(examGradeEntitySaved.getId())
+                .grade(examGradeEntitySaved.getGrade())
+                .examName(examScheduleEntity.getExam().getExamName())
+                .questionsAndResponses(questionAndResponsesList)
+                .build();
     }
 
     public ExamGradeEntity getExamGrade(Long examScheduleId) {
         return new ExamGradeEntity();
     }
 
-    public ExamResponse examEntityToExamResponse(ExamEntity examEntity){
+    public ExamResponse examEntityToExamResponse(ExamEntity examEntity) {
         return ExamResponse.builder()
                 .id(examEntity.getId())
                 .examName(examEntity.getExamName())
                 .questions(examEntity.getQuestions().stream().map(this::questionEntityToQuestionResponse).collect(Collectors.toList()))
                 .build();
     }
-    public StudentResponseResponse studentResponseEntityToStudentResponseResponse(StudentResponseEntity studentResponseEntity){
+
+    public StudentResponseResponse studentResponseEntityToStudentResponseResponse(StudentResponseEntity studentResponseEntity) {
         return StudentResponseResponse.builder()
                 .question(studentResponseEntity.getQuestion().getQuestion())
                 .studentResponse(studentResponseEntity.getStudentResponse())
                 .build();
     }
-    public QuestionResponse questionEntityToQuestionResponse(QuestionEntity questionEntity){
+
+    public QuestionResponse questionEntityToQuestionResponse(QuestionEntity questionEntity) {
         return QuestionResponse.builder()
                 .question(questionEntity.getQuestion())
                 .choice1(questionEntity.getChoice1())
@@ -145,13 +203,6 @@ public class ExamService {
                 .choice4(questionEntity.getChoice4())
                 .correctChoice(questionEntity.getCorrectChoice())
                 .score(questionEntity.getScore())
-                .build();
-    }
-    public ExamGradeResponse examGradeEntityToExamGradeResponse(ExamGradeEntity examGradeEntity,List<StudentResponseEntity> studentResponseEntityList){
-        return ExamGradeResponse.builder()
-                .exam(examEntityToExamResponse(examGradeEntity.getExamSchedule().getExam()))
-                .response(studentResponseEntityList.stream().map(this::studentResponseEntityToStudentResponseResponse).collect(Collectors.toList()))
-                .grade(examGradeEntity.getGrade())
                 .build();
     }
 

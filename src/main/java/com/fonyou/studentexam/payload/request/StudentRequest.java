@@ -18,10 +18,10 @@ public class StudentRequest {
     @Schema(example = "18")
     private int age;
     @NotEmpty
-    @Schema(example = "Tokio")
+    @Schema(example = "Bogota")
     private String city;
     @NotEmpty
     @ValidTimeZone
-    @Schema(example = "Asia/Tokyo")
+    @Schema(example = "America/Bogota")
     private String cityTimeZone;
 }
